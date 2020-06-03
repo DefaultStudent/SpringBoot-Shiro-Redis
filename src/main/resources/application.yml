@@ -1,8 +1,10 @@
-# ·şÎñÆ÷¶Ë¿ÚºÍÏîÄ¿Ãû³ÆÅäÖÃ
+# æœåŠ¡å™¨ç«¯å£å’Œé¡¹ç›®åç§°é…ç½®
 server:
   port:8081
-# Êı¾İ¿âÅäÖÃ
+# æ•°æ®åº“é…ç½®
 spring:
+  resources:
+    static-locations: classpath:/static/,classpath:/resources,classpath:/templates,classpath:/lib/
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
@@ -12,7 +14,7 @@ spring:
     url: jdbc:mysql://localhost:3306/weaponsystem?userUnicode=true&characterEncoding=utf-8&userSSL=false&serverTimezone=GMT%2B8
     username: root
     password: pp970928
-    # Ê¹ÓÃdruidÊı¾İÔ´
+    # ä½¿ç”¨druidæ•°æ®æº
     druid:
       filters: stat
       max-active: 20

@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -18,6 +19,17 @@ public class HelloController {
 
     @Autowired
     private UsersService usersService;
+
+    /**
+     * 进入登陆页面
+     * @return
+     */
+    @RequestMapping("login")
+    private ModelAndView start() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("login");
+        return modelAndView;
+    }
 
     @RequestMapping("/index")
     @ResponseBody
