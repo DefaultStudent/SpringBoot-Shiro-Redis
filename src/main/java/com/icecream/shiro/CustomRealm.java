@@ -1,6 +1,6 @@
 package com.icecream.shiro;
 
-import com.icecream.mapper.UsersMapper;
+import com.icecream.service.UsersService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -14,11 +14,11 @@ import java.util.Set;
 
 public class CustomRealm extends AuthorizingRealm {
 
-    private UsersMapper usersMapper;
+    private UsersService usersService;
 
     @Autowired
-    private void setUsersMapper(UsersMapper usersMapper) {
-        this.usersMapper = usersMapper;
+    private void setUsersService(UsersService usersService) {
+        this.usersService = usersService;
     }
 
     /**
@@ -33,7 +33,7 @@ public class CustomRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
         // 从数据库获取对应用户名用户的密码
-        String password= usersMapper.getPassword(token.getUsername());
+        String password= usersService.getPassword(token.getUsername());
 
         if (null == password) {
             throw new AccountException("用户名不正确");
@@ -53,7 +53,7 @@ public class CustomRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         String username = (String) SecurityUtils.getSubject().getPrincipal();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        String role = usersMapper.getRole(username);
+        String role = usersService.getRole(username);
         Set<String> set = new HashSet<>();
         set.add(role);
         info.setRoles(set);

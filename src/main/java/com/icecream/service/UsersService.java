@@ -2,6 +2,7 @@ package com.icecream.service;
 
 
 import com.icecream.entity.Users;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
@@ -11,6 +12,8 @@ public interface UsersService {
      * 获取全部用户信息
      * @return
      */
+
+    @Cacheable(value = "Users")
     List<Users> getAll();
 
     /**
