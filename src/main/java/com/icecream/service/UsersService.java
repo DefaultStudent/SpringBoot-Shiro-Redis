@@ -20,4 +20,18 @@ public interface UsersService {
      * @return
      */
     Users loginPage(String id, String pwd);
+
+    /**
+     * 获取用户密码
+     * @param username 用户名
+     * @return
+     */
+    String getPassword(String username);
+
+    /**
+     * 获取用户权限
+     * @param username 用户名
+     * @return
+     */
+    String getRole(String username);
 }

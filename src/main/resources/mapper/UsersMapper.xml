@@ -9,4 +9,16 @@
     <select id="loginPage" parameterType="String" resultType="com.icecream.entity.Users">
         SELECT * FROM users where usersId = #{id} AND userPwd = #{pwd}
     </select>
+
+    <select id="getPassword" parameterType="String" resultType="String">
+        SELECT userPwd
+        FROM users
+        WHERE username = #{username}
+    </select>
+
+    <select id="getRole" parameterType="String" resultType="String">
+        SELECT role
+        FROM users
+        WHERE username = #{username}
+    </select>
 </mapper>
