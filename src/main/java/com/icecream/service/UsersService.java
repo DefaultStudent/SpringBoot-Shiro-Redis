@@ -12,8 +12,6 @@ public interface UsersService {
      * 获取全部用户信息
      * @return
      */
-
-    @Cacheable(value = "Users")
     List<Users> getAll();
 
     /**

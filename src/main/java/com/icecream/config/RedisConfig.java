@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +30,7 @@ import java.util.Set;
 @EnableCaching
 @Configuration
 @AutoConfigureAfter(RedisAutoConfiguration.class)
-public class RedisConfig extends CachingConfigurerSupport {
+public class RedisConfig{
 
     /**
      * 配置自定义redisTemplate
@@ -40,8 +39,7 @@ public class RedisConfig extends CachingConfigurerSupport {
      * @return
      */
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate(
-            RedisConnectionFactory redisConnectionFactory) {
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
         template.setValueSerializer(jackson2JsonRedisSerializer());
@@ -61,7 +59,7 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Bean
     public RedisSerializer<Object> jackson2JsonRedisSerializer() {
         // 使用 Jackson2JsonRedisSerializer 来序列化和反序列化 redis 的 value 值
-        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<Object>(Object.class);
+        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
@@ -110,7 +108,6 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
     @Bean
-    @Override
     public KeyGenerator keyGenerator() {
         return (target, method, objects) -> {
             StringBuilder stringBuilder = new StringBuilder();
