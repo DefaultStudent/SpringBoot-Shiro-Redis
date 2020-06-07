@@ -3,6 +3,7 @@ package com.icecream.controller;
 import com.icecream.entity.Users;
 import com.icecream.model.ResultMap;
 import com.icecream.service.UsersService;
+import com.icecream.utils.JWTUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -10,10 +11,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -65,23 +63,24 @@ public class HelloController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResultMap login(String username, String userpassword) {
-        // 从 SecurityUtils 里创建一个 subject
-        Subject subject = SecurityUtils.getSubject();
-        // 在提交认证前准备一个 token（令牌）
-        UsernamePasswordToken token = new UsernamePasswordToken(username, userpassword);
-        // 执行认证登录
-        subject.login(token);
+    public ResultMap login(@RequestParam("username") String username,
+                           @RequestParam("password") String password) {
+        String realPassword = usersService.getPassword(username);
 
         // 根据权限返回指定数据
         String role = usersService.getRole(username);
 
-        if ("user".equals(role)) {
-            return resultMap.success().message("欢迎登录");
+        if (realPassword == null) {
+            return resultMap.fail().code(401).message("用户名错误");
+        } else if (!realPassword.equals(password)) {
+            return resultMap.fail().code(401).message("密码错误");
+        } else {
+            return resultMap.success().code(200).message(JWTUtil.createToken(username));
         }
-        if ("admin".equals(role)) {
-            return resultMap.success().message("欢迎来到管理员权限页面");
-        }
-        return resultMap.fail().message("权限错误");
+    }
+
+    @RequestMapping(params = "/unauthorized/{message}")
+    public ResultMap unauthorized(@PathVariable String message) {
+        return resultMap.success().code(401).message(message);
     }
 }

@@ -37,4 +37,19 @@ public interface UsersMapper {
      * @return
      */
     String getRole(String username);
+
+    /**
+     * 检查用户状态
+     */
+    int checkUserBanStatus(String username);
+
+    /**
+     * 获得用户角色默认的权限
+     */
+    String getRolePermission(String username);
+
+    /**
+     * 获得用户的权限
+     */
+    String getPermission(String username);
 }

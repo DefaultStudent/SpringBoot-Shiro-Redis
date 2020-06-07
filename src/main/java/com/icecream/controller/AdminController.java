@@ -29,4 +29,10 @@ public class AdminController {
         List<Users> list = usersService.getAll();
         return resultMap.success().message("您拥有管理员权限");
     }
+
+    @RequestMapping(value="/getUsers")
+    public ResultMap getUser() {
+        List<Users> list = usersService.getAll();
+        return resultMap.success().code(200).message(list);
+    }
 }

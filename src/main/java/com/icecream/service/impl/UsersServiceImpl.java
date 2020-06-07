@@ -52,4 +52,19 @@ public class UsersServiceImpl implements UsersService {
     public String getRole(String username) {
         return usersMapper.getPassword(username);
     }
+
+    @Override
+    public int checkUserBanStatus(String username) {
+        return usersMapper.checkUserBanStatus(username);
+    }
+
+    @Override
+    public String getRolePermission(String username) {
+        return usersMapper.getRolePermission(username);
+    }
+
+    @Override
+    public String getPermission(String username) {
+        return usersMapper.getPermission(username);
+    }
 }
