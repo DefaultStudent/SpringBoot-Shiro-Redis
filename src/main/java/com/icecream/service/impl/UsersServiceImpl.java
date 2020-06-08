@@ -5,7 +5,10 @@ import com.icecream.mapper.UsersMapper;
 import com.icecream.service.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,17 +18,29 @@ import java.util.List;
 @Service(value="usersService")
 public class UsersServiceImpl implements UsersService {
 
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
+
     @Resource
     private UsersMapper usersMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(UsersServiceImpl.class);
 
-    @Cacheable(value = "List<Users>")
+    @Cacheable(value = "AllUsers")
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Users> getAll() {
         logger.info("获取全部用户信息");
-        return usersMapper.getAll();
+
+        List<Users> getAllUsers = (List<Users>) redisTemplate.opsForValue().get("AllUsers");
+
+        if (null == getAllUsers) {
+            synchronized (this) {
+                getAllUsers = usersMapper.getAll();
+            }
+        }
+
+        return getAllUsers;
     }
 
     @Override

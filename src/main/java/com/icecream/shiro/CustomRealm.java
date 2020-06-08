@@ -9,6 +9,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -22,7 +23,12 @@ public class CustomRealm extends AuthorizingRealm {
 
     private UsersService usersService;
 
+    /**
+     * 不在这里使用 @Lazy 注解的话，会导致Spring自带的 @Cacheable 注解失效，无法放入 Redis 缓存中
+     * @param usersService
+     */
     @Autowired
+    @Lazy
     private void setUsersService(UsersService usersService) {
         this.usersService = usersService;
     }
