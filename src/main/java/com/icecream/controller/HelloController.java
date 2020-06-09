@@ -14,6 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -53,7 +56,7 @@ public class HelloController {
 
     /**
      * 进入登陆页面
-     * @return
+     * @return ModelAndView
      */
     @RequestMapping("start")
     private ModelAndView start() {
@@ -62,12 +65,21 @@ public class HelloController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    /**
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @return 跳转至 AdminController
+     */
+    @PostMapping("/login")
     public ResultMap login(@RequestParam("username") String username,
-                           @RequestParam("password") String password) {
+                           @RequestParam("password") String password,
+                           HttpServletRequest request,
+                           HttpServletResponse response) throws IOException {
         String realPassword = usersService.getPassword(username);
 
-        // 根据权限返回指定数据
         String role = usersService.getRole(username);
 
         if (realPassword == null) {
@@ -75,6 +87,7 @@ public class HelloController {
         } else if (!realPassword.equals(password)) {
             return resultMap.fail().code(401).message("密码错误");
         } else {
+            response.sendRedirect(request.getContextPath() + "/admin/index");
             return resultMap.success().code(200).message(JWTUtil.createToken(username));
         }
     }

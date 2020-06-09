@@ -31,7 +31,7 @@
     <select id="getRolePermission" parameterType="String" resultType="String">
         SELECT role.permission
         FROM users, role
-        WHERE username = #{username} AND role.role = user.role
+        WHERE username = #{username} AND role.role = users.role
     </select>
 
     <select id="getPermission" parameterType="String" resultType="String">
