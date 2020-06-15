@@ -10,12 +10,12 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -64,12 +64,15 @@ public class HelloController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResultMap login(String username, String userpassword) {
+    @PostMapping("/login")
+    public void login(@RequestParam("username") String username,
+                      @RequestParam("password") String password,
+                           HttpServletRequest request,
+                           HttpServletResponse response) throws IOException {
         // 从 SecurityUtils 里创建一个 subject
         Subject subject = SecurityUtils.getSubject();
         // 在提交认证前准备一个 token（令牌）
-        UsernamePasswordToken token = new UsernamePasswordToken(username, userpassword);
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         // 执行认证登录
         subject.login(token);
 
@@ -77,11 +80,10 @@ public class HelloController {
         String role = usersService.getRole(username);
 
         if ("user".equals(role)) {
-            return resultMap.success().message("欢迎登录");
+            response.sendRedirect("111");
         }
         if ("admin".equals(role)) {
-            return resultMap.success().message("欢迎来到管理员权限页面");
+            response.sendRedirect(request.getContextPath() + "/admin/getMessage");
         }
-        return resultMap.fail().message("权限错误");
     }
 }

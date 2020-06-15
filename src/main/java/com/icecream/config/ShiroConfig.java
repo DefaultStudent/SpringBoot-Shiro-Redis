@@ -18,7 +18,7 @@ public class ShiroConfig {
         // 必须设置 SercurityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         // 如果不设置，则会默认寻找Web工程根目录下的 "/login.jsp" 或 "/login"映射
-        shiroFilterFactoryBean.setLoginUrl("/notLogin");
+        shiroFilterFactoryBean.setLoginUrl("/start");
         // 设置无权限时跳转的 Url
         shiroFilterFactoryBean.setUnauthorizedUrl("/notRole");
 
