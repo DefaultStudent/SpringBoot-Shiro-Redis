@@ -3,7 +3,6 @@ package com.icecream.controller;
 import com.icecream.entity.Users;
 import com.icecream.model.ResultMap;
 import com.icecream.service.UsersService;
-import com.icecream.utils.JWTUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -56,7 +55,7 @@ public class HelloController {
 
     /**
      * 进入登陆页面
-     * @return ModelAndView
+     * @return
      */
     @RequestMapping("start")
     private ModelAndView start() {
@@ -65,35 +64,26 @@ public class HelloController {
         return modelAndView;
     }
 
-    /**
-     *
-     * @param username 用户名
-     * @param password 密码
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
-     * @return 跳转至 AdminController
-     */
     @PostMapping("/login")
-    public ResultMap login(@RequestParam("username") String username,
-                           @RequestParam("password") String password,
+    public void login(@RequestParam("username") String username,
+                      @RequestParam("password") String password,
                            HttpServletRequest request,
                            HttpServletResponse response) throws IOException {
-        String realPassword = usersService.getPassword(username);
+        // 从 SecurityUtils 里创建一个 subject
+        Subject subject = SecurityUtils.getSubject();
+        // 在提交认证前准备一个 token（令牌）
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        // 执行认证登录
+        subject.login(token);
 
+        // 根据权限返回指定数据
         String role = usersService.getRole(username);
 
-        if (realPassword == null) {
-            return resultMap.fail().code(401).message("用户名错误");
-        } else if (!realPassword.equals(password)) {
-            return resultMap.fail().code(401).message("密码错误");
-        } else {
-            response.sendRedirect(request.getContextPath() + "/admin/index");
-            return resultMap.success().code(200).message(JWTUtil.createToken(username));
+        if ("user".equals(role)) {
+            response.sendRedirect("111");
         }
-    }
-
-    @RequestMapping(params = "/unauthorized/{message}")
-    public ResultMap unauthorized(@PathVariable String message) {
-        return resultMap.success().code(401).message(message);
+        if ("admin".equals(role)) {
+            response.sendRedirect(request.getContextPath() + "/admin/getMessage");
+        }
     }
 }
