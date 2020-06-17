@@ -1,8 +1,13 @@
 package com.icecream.entity;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * @author 96495
+ */
 public class Users implements Serializable {
     private static final long serialVersionUID = 8797052915712615680L;
     /**
@@ -13,11 +18,14 @@ public class Users implements Serializable {
     /**
      * 用户名
      */
+    @NotNull(message = "用户名不能为空")
     private String username;
 
     /**
      * 用户密码
      */
+    @NotNull(message = "密码不能为空")
+    @Size(min = 1, max = 6, message = "密码必须介于1 - 6个字符之间")
     private String userPwd;
 
     public String getUsersId() {
