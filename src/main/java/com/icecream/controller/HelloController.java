@@ -1,6 +1,6 @@
 package com.icecream.controller;
 
-import com.icecream.entity.Users;
+import com.icecream.enums.Roles;
 import com.icecream.model.ResultMap;
 import com.icecream.service.UsersService;
 import org.apache.shiro.SecurityUtils;
@@ -9,14 +9,12 @@ import org.apache.shiro.subject.Subject;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author 96495
@@ -67,8 +65,9 @@ public class HelloController {
     @PostMapping("/login")
     public void login(@RequestParam("username") String username,
                       @RequestParam("password") String password,
-                           HttpServletRequest request,
-                           HttpServletResponse response) throws IOException {
+                      HttpServletRequest request,
+                      HttpServletResponse response) throws IOException {
+
         // 从 SecurityUtils 里创建一个 subject
         Subject subject = SecurityUtils.getSubject();
         // 在提交认证前准备一个 token（令牌）
@@ -79,10 +78,10 @@ public class HelloController {
         // 根据权限返回指定数据
         String role = usersService.getRole(username);
 
-        if ("user".equals(role)) {
+        if (Roles.NORMAL.getRoles().equals(role)) {
             response.sendRedirect("111");
         }
-        if ("admin".equals(role)) {
+        if (Roles.ADMIN.getRoles().equals(role)) {
             response.sendRedirect(request.getContextPath() + "/admin/getMessage");
         }
     }
