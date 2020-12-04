@@ -33,11 +33,6 @@ public class CustomRealm extends AuthorizingRealm {
         this.usersService = usersService;
     }
 
-    @Override
-    public boolean supports(AuthenticationToken token) {
-        return token instanceof  JWTToken;
-    }
-
     /**
      * 获取身份验证信息
      * Shiro 中，最终是通过 Realm 来获取应用程序中的用户、角色及权限信息的
@@ -48,7 +43,7 @@ public class CustomRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        String token = (String) authenticationToken.getCredentials();
+        String token = new String((char[]) authenticationToken.getCredentials());
 
         // 解密获得 username, 用于和数据库进行对比
         String username = JWTUtil.getUsername(token);

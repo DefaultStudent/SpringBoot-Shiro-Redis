@@ -78,7 +78,7 @@ public class RedisConfig{
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         // 生成一个默认配置，通过 configuration 对象即可对缓存进行自定义配置
         RedisCacheConfiguration configuration = RedisCacheConfiguration.defaultCacheConfig();
-        // 设置缓存的默认国企时间，使用 Duration
+        // 设置缓存的默认过期时间，使用 Duration
         configuration = configuration.entryTtl(Duration.ofMinutes(1))
                 // 设置 key 为 String 序列化
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))

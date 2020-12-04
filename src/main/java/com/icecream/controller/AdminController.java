@@ -3,19 +3,14 @@ package com.icecream.controller;
 import com.icecream.entity.Users;
 import com.icecream.model.ResultMap;
 import com.icecream.service.UsersService;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
-/**
- * @author 96495
- */
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
@@ -30,23 +25,9 @@ public class AdminController {
         this.usersService = usersService;
     }
 
-    @RequestMapping(value = "/getMessage", method = RequestMethod.GET)
-    @RequiresRoles("admin")
+    @GetMapping("/getMessage")
     public ResultMap getMessage() {
-        return resultMap.success().message("您拥有管理员权限");
-    }
-
-    @GetMapping("/getUsers")
-    @RequiresRoles("admin")
-    public ResultMap getUser() {
         List<Users> list = usersService.getAll();
-        return resultMap.success().code(200).message(list);
-    }
-
-    @RequestMapping(value="/index")
-    public ModelAndView index() {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("index");
-        return modelAndView;
+        return resultMap.success().message("您拥有管理员权限");
     }
 }
