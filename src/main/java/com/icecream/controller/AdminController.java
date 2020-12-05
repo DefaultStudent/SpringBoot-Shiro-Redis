@@ -7,8 +7,8 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -31,5 +31,15 @@ public class AdminController {
     public ResultMap getMessage() {
         List<Users> list = usersService.getAll();
         return resultMap.success().message("您拥有管理员权限");
+    }
+
+    @GetMapping("/showIndex")
+    @RequiresRoles("admin")
+    private ModelAndView showIndex() {
+        List<Users> list = usersService.getAll();
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("index-2");
+        return modelAndView;
+
     }
 }
