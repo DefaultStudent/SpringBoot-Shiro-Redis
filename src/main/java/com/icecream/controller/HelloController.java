@@ -80,7 +80,7 @@ public class HelloController {
             String role = usersService.getRole(username);
 
             if ("admin".equals(role)) {
-                response.sendRedirect(request.getContextPath() + "/admin/showIndex");
+                response.sendRedirect(request.getContextPath() + "/admin/showIndex.html");
             }
 
             return resultMap.success().code(200).message(JWTUtil.createToken(username));
