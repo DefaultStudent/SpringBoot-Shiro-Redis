@@ -76,6 +76,13 @@ public class HelloController {
         } else if (!realPassword.equals(password)) {
             return resultMap.fail().code(401).message("密码错误");
         } else {
+
+            String role = usersService.getRole(username);
+
+            if ("admin".equals(role)) {
+                response.sendRedirect(request.getContextPath() + "/admin/showIndex");
+            }
+
             return resultMap.success().code(200).message(JWTUtil.createToken(username));
         }
     }
