@@ -3,6 +3,7 @@ package com.icecream.controller;
 import com.icecream.enums.Roles;
 import com.icecream.model.ResultMap;
 import com.icecream.service.UsersService;
+import com.icecream.utils.JWTUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * @author 96495
@@ -63,26 +65,23 @@ public class HelloController {
     }
 
     @PostMapping("/login")
-    public void login(@RequestParam("username") String username,
+    public ResultMap login(@RequestParam("username") String username,
                       @RequestParam("password") String password,
                       HttpServletRequest request,
                       HttpServletResponse response) throws IOException {
 
-        // 从 SecurityUtils 里创建一个 subject
-        Subject subject = SecurityUtils.getSubject();
-        // 在提交认证前准备一个 token（令牌）
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-        // 执行认证登录
-        subject.login(token);
-
-        // 根据权限返回指定数据
-        String role = usersService.getRole(username);
-
-        if (Roles.NORMAL.getRoles().equals(role)) {
-            response.sendRedirect("111");
+        String realPassword = usersService.getPassword(username);
+        if (realPassword == null) {
+            return resultMap.fail().code(401).message("用户名错误");
+        } else if (!realPassword.equals(password)) {
+            return resultMap.fail().code(401).message("密码错误");
+        } else {
+            return resultMap.success().code(200).message(JWTUtil.createToken(username));
         }
-        if (Roles.ADMIN.getRoles().equals(role)) {
-            response.sendRedirect(request.getContextPath() + "/admin/getMessage");
-        }
+    }
+
+    @RequestMapping(path = "/unauthorized/{message}")
+    public ResultMap unauthorized(@PathVariable String message) throws UnsupportedEncodingException {
+        return resultMap.success().code(401).message(message);
     }
 }
