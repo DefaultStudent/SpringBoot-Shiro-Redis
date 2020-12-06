@@ -40,6 +40,12 @@ public class AdminController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("index");
         return modelAndView;
+    }
 
+    @GetMapping("/welcome")
+    private ModelAndView showWelcome() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("welcome");
+        return modelAndView;
     }
 }

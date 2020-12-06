@@ -10,6 +10,7 @@ import org.apache.shiro.subject.Subject;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * @author 96495
  */
-@RestController
+@Controller
 @ComponentScan("com.icecream")
 @MapperScan("com.icecream.mapper")
 public class HelloController {
@@ -65,26 +66,31 @@ public class HelloController {
     }
 
     @PostMapping("/login")
-    public ResultMap login(@RequestParam("username") String username,
+    public String login(@RequestParam("username") String username,
                       @RequestParam("password") String password,
                       HttpServletRequest request,
                       HttpServletResponse response) throws IOException {
 
         String realPassword = usersService.getPassword(username);
         if (realPassword == null) {
-            return resultMap.fail().code(401).message("用户名错误");
+            // return resultMap.fail().code(401).message("用户名错误");
         } else if (!realPassword.equals(password)) {
-            return resultMap.fail().code(401).message("密码错误");
+            // return resultMap.fail().code(401).message("密码错误");
         } else {
 
             String role = usersService.getRole(username);
 
             if ("admin".equals(role)) {
-                response.sendRedirect(request.getContextPath() + "/admin/showIndex.html");
+                return "redirect:/admin/showIndex.html";
+                //              response.sendRedirect(request.getContextPath() + "/admin/showIndex.html");
             }
 
-            return resultMap.success().code(200).message(JWTUtil.createToken(username));
+            return "redirect:/admin/showIndex.html";
+
+//            return resultMap.success().code(200).message(JWTUtil.createToken(username));
         }
+
+        return "";
     }
 
     @RequestMapping(path = "/unauthorized/{message}")

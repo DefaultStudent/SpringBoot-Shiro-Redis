@@ -8,6 +8,8 @@ spring:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
+    mode: html5
+    encoding: utf-8
   redis:
     database: 1
     host: 127.0.0.1
