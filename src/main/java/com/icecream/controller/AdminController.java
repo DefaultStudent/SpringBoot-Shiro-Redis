@@ -32,13 +32,19 @@ public class AdminController {
         return resultMap.success().message("您拥有管理员权限");
     }
 
-    @GetMapping("/showIndex")
+    @GetMapping("/showIndex.html")
     @RequiresRoles("admin")
     private ModelAndView showIndex() {
         List<Users> list = usersService.getAll();
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("index-2");
+        modelAndView.setViewName("index");
         return modelAndView;
+    }
 
+    @GetMapping("/welcome")
+    private ModelAndView showWelcome() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("welcome");
+        return modelAndView;
     }
 }
