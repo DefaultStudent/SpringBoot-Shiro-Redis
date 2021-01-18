@@ -71,26 +71,24 @@ public class HelloController {
                       HttpServletRequest request,
                       HttpServletResponse response) throws IOException {
 
-        String realPassword = usersService.getPassword(username);
-        if (realPassword == null) {
-            // return resultMap.fail().code(401).message("用户名错误");
-        } else if (!realPassword.equals(password)) {
-            // return resultMap.fail().code(401).message("密码错误");
-        } else {
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
 
-            String role = usersService.getRole(username);
+        subject.login(token);
+
+        String role = usersService.getRole(username);
+
 
             if ("admin".equals(role)) {
                 return "redirect:/admin/showIndex.html";
                 //              response.sendRedirect(request.getContextPath() + "/admin/showIndex.html");
             }
 
-            return "redirect:/admin/showIndex.html";
+            if("user".equals(role)) {
+                return "redirect:/user/getMessage";
+            }
 
-//            return resultMap.success().code(200).message(JWTUtil.createToken(username));
-        }
-
-        return "";
+        return "redirect:/guest/getMessage";
     }
 
     @RequestMapping(path = "/unauthorized/{message}")
