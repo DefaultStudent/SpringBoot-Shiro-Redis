@@ -65,7 +65,7 @@ public class UsersServiceImpl implements UsersService {
      */
     @Override
     public String getRole(String username) {
-        return usersMapper.getPassword(username);
+        return usersMapper.getRole(username);
     }
 
     @Override

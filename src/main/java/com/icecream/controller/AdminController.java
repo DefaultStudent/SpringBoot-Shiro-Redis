@@ -26,14 +26,12 @@ public class AdminController {
     }
 
     @GetMapping("/getMessage")
-    @RequiresRoles("admin")
     public ResultMap getMessage() {
         List<Users> list = usersService.getAll();
         return resultMap.success().message("您拥有管理员权限");
     }
 
     @GetMapping("/showIndex.html")
-    @RequiresRoles("admin")
     private ModelAndView showIndex() {
         List<Users> list = usersService.getAll();
         ModelAndView modelAndView = new ModelAndView();
