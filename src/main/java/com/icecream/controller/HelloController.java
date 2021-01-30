@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * @author 96495
  */
-@Controller
+@RestController
 @ComponentScan("com.icecream")
 @MapperScan("com.icecream.mapper")
 public class HelloController {
@@ -66,29 +66,38 @@ public class HelloController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam("username") String username,
+    public ResultMap login(@RequestParam("username") String username,
                       @RequestParam("password") String password,
                       HttpServletRequest request,
                       HttpServletResponse response) throws IOException {
 
-        Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        String realPassword = usersService.getPassword(username);
 
-        subject.login(token);
+        if (realPassword == null) return resultMap.fail().code(401).message("用户名错误");
 
-        String role = usersService.getRole(username);
+        if (!realPassword.equals(password)) return resultMap.fail().code(401).message("密码错误");
 
+        return resultMap.success().code(200).message(JWTUtil.createToken(username));
 
-            if ("admin".equals(role)) {
-                return "redirect:/admin/showIndex.html";
-                //              response.sendRedirect(request.getContextPath() + "/admin/showIndex.html");
-            }
-
-            if("user".equals(role)) {
-                return "redirect:/user/getMessage";
-            }
-
-        return "redirect:/guest/getMessage";
+//        Subject subject = SecurityUtils.getSubject();
+//        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+//
+//        subject.login(token);
+//
+//        String role = usersService.getRole(username);
+//
+//
+//            if ("admin".equals(role)) {
+////                return "redirect:/admin/showIndex.html";
+//                response.sendRedirect(request.getContextPath() + "/admin/showIndex.html");
+//            }
+//
+//            if("user".equals(role)) {
+////                return "redirect:/user/getMessage";
+//                response.sendRedirect(request.getContextPath() + "/user/getMessage");
+//            }
+//
+////        return "redirect:/guest/getMessage";
     }
 
     @RequestMapping(path = "/unauthorized/{message}")

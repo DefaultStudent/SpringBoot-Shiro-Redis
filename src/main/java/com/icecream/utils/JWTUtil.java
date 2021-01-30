@@ -8,9 +8,13 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author 96495
+ * @Description JWT 工具类
+ *
  */
 public class JWTUtil {
 
@@ -35,8 +39,13 @@ public class JWTUtil {
             Date date = new Date(System.currentTimeMillis() + EXPRIE_TIME);
             Algorithm algorithm = Algorithm.HMAC256(SECRET);
 
+            Map<String, Object> header = new HashMap<>(2);
+            header.put("typ", "JWT");
+            header.put("alg", "HS256");
+
             // 附带 username 信息
             return JWT.create()
+                    .withHeader(header)
                     .withClaim("username", username)
                     // 到期时间
                     .withExpiresAt(date)
