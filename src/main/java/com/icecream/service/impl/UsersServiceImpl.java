@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ public class UsersServiceImpl implements UsersService {
     private static final Logger logger = LoggerFactory.getLogger(UsersServiceImpl.class);
 
     @Cacheable(value = "AllUsers")
+    @Async
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Users> getAll() {

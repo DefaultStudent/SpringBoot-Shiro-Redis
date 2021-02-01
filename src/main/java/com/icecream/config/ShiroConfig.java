@@ -24,30 +24,9 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
-    @Bean
-    public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
-
-        ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
-
-        // 添加自己的过滤器
-        Map<String, Filter> filterMap = new LinkedHashMap<>();
-
-        // 设置自定义的JWT过滤器
-        filterMap.put("jwt", new JWTFilter());
-        factoryBean.setFilters(filterMap);
-        factoryBean.setSecurityManager(securityManager);
-
-        // 设置无权限时跳转的url
-        factoryBean.setUnauthorizedUrl("/unauthorized/无权限");
-        Map<String, String> filterRuleMap = new HashMap<>();
-        // 所有请求通过自定义的JWTFilter
-        filterRuleMap.put("/**", "jwt");
-        // 访问unauthorized/** 不通过JWTFilter
-        filterRuleMap.put("/unauthorized/**", "anon");
-        factoryBean.setFilterChainDefinitionMap(filterRuleMap);
-        return factoryBean;
-
-
+//    @Bean
+//    public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
+//
 //        ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 //        // 必须设置 SercurityManager
 //        shiroFilterFactoryBean.setSecurityManager(securityManager);
@@ -70,19 +49,93 @@ public class ShiroConfig {
 //
 //        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 //        return shiroFilterFactoryBean;
+//    }
+
+    /**
+     * 先走filter, 然后filter如果检测到请求头存在token, 则用token 去 login ，走Realm去验证
+     * @param securityManager
+     * @return
+     */
+    @Bean
+    public ShiroFilterFactoryBean factory(SecurityManager securityManager) {
+        ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
+
+        // 添加自己的过滤器并且取名为jwt
+        Map<String, Filter> filterMap = new LinkedHashMap<>();
+        // 设置自定义的JWT过滤器
+        filterMap.put("jwt", new JWTFilter());
+        factoryBean.setFilters(filterMap);
+        factoryBean.setSecurityManager(securityManager);
+        // 设置无权限时跳转的url
+        factoryBean.setUnauthorizedUrl("/unauthorized/无权限");
+        Map<String, String> filterRuleMap = new HashMap<>();
+        // 所有请求通过自定义的JWT Filter
+        filterRuleMap.put("/**", "jwt");
+        // 访问 /unauthorized/** 不通过JWT Filter
+        filterRuleMap.put("/unauthorized/**", "anon");
+        factoryBean.setFilterChainDefinitionMap(filterRuleMap);
+        return factoryBean;
     }
 
 
+//    /**
+//     * 注入 securityManager
+//     * @return
+//     */
+//    @Bean
+//    public SecurityManager securityManager(CustomRealm customRealm) {
+//        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+//
+//        // 设置 Realm
+//        securityManager.setRealm(customRealm);
+//        return securityManager;
+//    }
+
     /**
      * 注入 securityManager
+     * @param customRealm
      * @return
      */
     @Bean
     public SecurityManager securityManager(CustomRealm customRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-
-        // 设置 Realm
+        // 设置自定的 realm
         securityManager.setRealm(customRealm);
+
+        // 关闭shiro自带的session
+        DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
+        DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
+        defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
+        subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
+        securityManager.setSubjectDAO(subjectDAO);
+
         return securityManager;
+    }
+
+    /**
+     * 添加注解支持
+     * @return
+     */
+    @Bean
+    @DependsOn({"lifecycleBeanPostProcessor"})
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+
+        // 强制使用cglib，防止重复代理和可能引起代理出错的问题
+        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
+
+        return defaultAdvisorAutoProxyCreator;
+    }
+
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
+        advisor.setSecurityManager(securityManager);
+        return advisor;
+    }
+
+    @Bean
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
     }
 }

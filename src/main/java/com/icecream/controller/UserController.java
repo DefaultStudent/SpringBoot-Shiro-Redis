@@ -1,7 +1,9 @@
 package com.icecream.controller;
 
 import com.icecream.model.ResultMap;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +25,8 @@ public class UserController {
         this.resultMap = resultMap;
     }
 
-    @RequestMapping(value = "/getMessage", method = RequestMethod.GET)
+    @GetMapping(value = "/getMessage")
+    @RequiresRoles("user")
     public ResultMap getMessage() {
         return resultMap.success().message("你拥有用户权限，可以获得该接口信息！");
     }

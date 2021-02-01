@@ -8,16 +8,20 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author 96495
+ * @Description JWT 工具类
+ *
  */
 public class JWTUtil {
 
     /**
      * 设置过期时间为 24 小时
      */
-    private static final  long EXPRIE_TIME = 60 * 24 * 60 * 1000;
+    private static final  long EXPRIE_TIME = 1 * 60 * 60 * 1000;
 
     /**
      * 密钥
@@ -35,8 +39,13 @@ public class JWTUtil {
             Date date = new Date(System.currentTimeMillis() + EXPRIE_TIME);
             Algorithm algorithm = Algorithm.HMAC256(SECRET);
 
+            Map<String, Object> header = new HashMap<>(2);
+            header.put("typ", "JWT");
+            header.put("alg", "HS256");
+
             // 附带 username 信息
             return JWT.create()
+                    .withHeader(header)
                     .withClaim("username", username)
                     // 到期时间
                     .withExpiresAt(date)
