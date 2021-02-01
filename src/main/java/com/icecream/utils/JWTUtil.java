@@ -21,7 +21,7 @@ public class JWTUtil {
     /**
      * 设置过期时间为 24 小时
      */
-    private static final  long EXPRIE_TIME = 60 * 24 * 60 * 1000;
+    private static final  long EXPRIE_TIME = 1 * 60 * 60 * 1000;
 
     /**
      * 密钥

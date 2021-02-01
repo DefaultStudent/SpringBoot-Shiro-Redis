@@ -24,7 +24,6 @@ import java.util.Set;
 public class CustomRealm extends AuthorizingRealm {
 
     private UsersService usersService;
-    private  Logger logger;
 
     /**
      * 不在这里使用 @Lazy 注解的话，会导致Spring自带的 @Cacheable 注解失效，无法放入 Redis 缓存中

@@ -1,16 +1,14 @@
 package com.icecream.controller;
 
-import com.icecream.enums.Roles;
 import com.icecream.model.ResultMap;
 import com.icecream.service.UsersService;
-import com.icecream.utils.JWTUtil;
+import com.icecream.utils.Constant;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -47,11 +45,18 @@ public class HelloController {
         return resultMap.success().message("您没有权限");
     }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ResultMap logout() {
-        Subject subject = SecurityUtils.getSubject();
-        subject.logout();
-        return resultMap.success().message("注销成功");
+    @GetMapping(value = "/logout")
+    public void logout(HttpServletRequest request,
+                            HttpServletResponse response) throws IOException{
+
+        Object user_session = request.getSession().getAttribute(Constant.USER_SESSION);
+
+        if (user_session != null) {
+            request.getSession().removeAttribute(Constant.USER_SESSION);
+            request.getSession().removeAttribute(Constant.USER_NAME);
+            response.sendRedirect(request.getContextPath() + "/start");
+        }
+
     }
 
     /**
@@ -66,38 +71,25 @@ public class HelloController {
     }
 
     @PostMapping("/login")
-    public ResultMap login(@RequestParam("username") String username,
+    public void login(@RequestParam("username") String username,
                       @RequestParam("password") String password,
                       HttpServletRequest request,
                       HttpServletResponse response) throws IOException {
 
         String realPassword = usersService.getPassword(username);
 
-        if (realPassword == null) return resultMap.fail().code(401).message("用户名错误");
+        if (realPassword == null || !realPassword.equals(password))response.sendRedirect(request.getContextPath() + "/start");
 
-        if (!realPassword.equals(password)) return resultMap.fail().code(401).message("密码错误");
+        //Authorization
+        request.getSession().setAttribute(Constant.USER_SESSION, request.getSession().getId());
+        request.getSession().setAttribute(Constant.USER_NAME, username);
 
-        return resultMap.success().code(200).message(JWTUtil.createToken(username));
+        String role = usersService.getRole(username);
 
-//        Subject subject = SecurityUtils.getSubject();
-//        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-//
-//        subject.login(token);
-//
-//        String role = usersService.getRole(username);
-//
-//
-//            if ("admin".equals(role)) {
-////                return "redirect:/admin/showIndex.html";
-//                response.sendRedirect(request.getContextPath() + "/admin/showIndex.html");
-//            }
-//
-//            if("user".equals(role)) {
-////                return "redirect:/user/getMessage";
-//                response.sendRedirect(request.getContextPath() + "/user/getMessage");
-//            }
-//
-////        return "redirect:/guest/getMessage";
+        if ("admin".equals(role)) response.sendRedirect(request.getContextPath() + "/admin/showIndex.html");
+        if ("user".equals(role)) response.sendRedirect(request.getContextPath() + "/user/getMessage");
+
+
     }
 
     @RequestMapping(path = "/unauthorized/{message}")

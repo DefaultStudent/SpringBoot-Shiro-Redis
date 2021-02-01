@@ -55,8 +55,8 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String token = httpServletRequest.getHeader("Token");
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        String token = httpServletResponse.getHeader("Token");
         return token != null;
     }
 
@@ -70,8 +70,8 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String token = httpServletRequest.getHeader("Token");
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        String token = httpServletResponse.getHeader("Token");
         JWTToken jwtToken = new JWTToken(token);
         // 交给 Realm 进行登入，如果出错他会抛出异常并被捕获
         getSubject(request, response).login(jwtToken);
