@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icecream.mapper.WeaponKindMapper">
+    <select id="getAllWeapon" resultType="com.icecream.entity.WeaponKind">
+        SELECT * FROM weaponkind
+    </select>
+
+    <insert id="insertOne" parameterType="com.icecream.entity.WeaponKind" keyProperty="weaponkindId">
+        insert into weaponkind(weaponkindId, weaponkindName) values (#{weaponKindId}, #{weaponKindName})
+    </insert>
+</mapper>

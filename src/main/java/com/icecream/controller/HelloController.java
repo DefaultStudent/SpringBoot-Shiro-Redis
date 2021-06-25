@@ -52,7 +52,6 @@ public class HelloController {
         Object user_session = request.getSession().getAttribute(Constant.USER_SESSION);
 
         if (user_session != null) {
-            request.getSession().removeAttribute(Constant.USER_SESSION);
             request.getSession().removeAttribute(Constant.USER_NAME);
             response.sendRedirect(request.getContextPath() + "/start");
         }
@@ -81,7 +80,6 @@ public class HelloController {
         if (realPassword == null || !realPassword.equals(password))response.sendRedirect(request.getContextPath() + "/start");
 
         //Authorization
-        request.getSession().setAttribute(Constant.USER_SESSION, request.getSession().getId());
         request.getSession().setAttribute(Constant.USER_NAME, username);
 
         String role = usersService.getRole(username);

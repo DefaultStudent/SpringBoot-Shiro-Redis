@@ -23,12 +23,11 @@ public class LoginFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        Object user_session = request.getSession().getAttribute(Constant.USER_SESSION);
         String username = (String) request.getSession().getAttribute(Constant.USER_NAME);
 
-        if (user_session == request.getSession().getId() && username != null) {
-            if(response.getHeader("Token") == null || "".equals(response.getHeader("Token"))) {
-                response.setHeader("Token", JWTUtil.createToken(username));
+        if (username != null) {
+            if(response.getHeader(Constant.TOKEN) == null || "".equals(response.getHeader(Constant.TOKEN))) {
+                response.setHeader(Constant.TOKEN, JWTUtil.createToken(username));
                 filterChain.doFilter(servletRequest, servletResponse);
             }
         } else {

@@ -1,6 +1,7 @@
 package com.icecream.filter;
 
 import com.icecream.shiro.JWTToken;
+import com.icecream.utils.Constant;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.slf4j.Logger;
@@ -56,7 +57,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        String token = httpServletResponse.getHeader("Token");
+        String token = httpServletResponse.getHeader(Constant.TOKEN);
         return token != null;
     }
 
@@ -71,7 +72,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        String token = httpServletResponse.getHeader("Token");
+        String token = httpServletResponse.getHeader(Constant.TOKEN);
         JWTToken jwtToken = new JWTToken(token);
         // 交给 Realm 进行登入，如果出错他会抛出异常并被捕获
         getSubject(request, response).login(jwtToken);
