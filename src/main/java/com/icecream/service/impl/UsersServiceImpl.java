@@ -46,6 +46,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Users loginPage(String id, String pwd) {
         return usersMapper.loginPage(id, pwd);
     }
@@ -56,6 +57,7 @@ public class UsersServiceImpl implements UsersService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String getPassword(String username) {
         return usersMapper.getPassword(username);
     }
@@ -66,21 +68,25 @@ public class UsersServiceImpl implements UsersService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String getRole(String username) {
         return usersMapper.getRole(username);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int checkUserBanStatus(String username) {
         return usersMapper.checkUserBanStatus(username);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String getRolePermission(String username) {
         return usersMapper.getRolePermission(username);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String getPermission(String username) {
         return usersMapper.getPermission(username);
     }

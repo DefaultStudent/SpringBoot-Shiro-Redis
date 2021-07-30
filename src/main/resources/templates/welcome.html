@@ -117,9 +117,11 @@
 </div>
 <script type="text/javascript">
 	$(function () {
-		// 新建数组来接受数据
-		var wname = [];
-		var nums = [];
+		let chartNums;
+		let myChart;
+// 新建数组来接受数据
+		let wname = [];
+		let nums = [];
 
 		//AJAX接收数据主体
 		$.ajax({
@@ -164,7 +166,7 @@
 					}
 				},
 				error :function(errorMsg) {
-					alert("获取后台数据失败！");
+					console.log("获取后台数据失败！");
 				}
 			});
 		}, 2000)
@@ -191,8 +193,8 @@
 		}
 
 		// 基于准备好的dom，初始化echarts实例
-		var myChart = echarts.init(document.getElementById('maintest'));
-		var chartNums = dataOption(wname, nums);
+		myChart = echarts.init(document.getElementById('maintest'));
+		chartNums = dataOption(wname, nums);
 		myChart.setOption(chartNums);
 	})
 </script>

@@ -1,10 +1,14 @@
 package com.icecream.entity;
 
+import java.io.Serializable;
+
 /**
  * @date
  * @author 96495
  */
-public class WeaponKind {
+public class WeaponKind implements Serializable {
+
+    private static final long serialVersionUID = 1024052915712615680L;
 
     private int weaponKindId;
 
